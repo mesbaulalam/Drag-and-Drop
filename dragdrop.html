@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Drag and Drop</title>
+    <style>
+      #container {
+        margin-left: 100px;
+        margin-top: 30px;
+      }
+      h2 {
+        margin-left: 50px;
+      }
+      #dest {
+        background: lightCyan;
+        border: 1px solid #444;
+        border-radius: 50px;
+        width: 640px;
+        height: 480px;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h2>Drag & Drop Demo</h2>
+      <div id="dest" ondrop="drop(event)" ondragover="allow(event)">
+        <img
+          id="trash"
+          src="trashlit.png"
+          ondragover="trash(event)"
+          ondragleave="trashLeave(event)"
+          ondrop="trashDelete(event)"
+        />
+      </div>
+      <p>
+        <img
+          id="source1"
+          src="cube.png"
+          draggable="true"
+          ondragstart="drag(event)"
+        />
+        <img
+          id="source2"
+          src="Dice.png"
+          draggable="true"
+          ondragstart="drag(event)"
+        />
+        <img
+          id="source3"
+          src="ball.png"
+          draggable="true"
+          ondragstart="drag(event)"
+        />
+      </p>
+      <p>
+        Dragging the image to copy it into the above div element.<br />
+        To move, hold the 'Shift' key while dragging.
+      </p>
+    </div>
+
+    <script>
+      function allow(event) {
+        event.preventDefault();
+      }
+
+      function drag(event) {
+        event.dataTransfer.setData("image/png", event.target.id);
+        img = event.target
+      }
+
+      function drop(event) {
+        event.preventDefault();
+        var data = event.dataTransfer.getData("image/png");
+        if(img.parentNode.id=="dest") {
+          var audio = new Audio("reject.wav")
+          audio.play();
+          return
+        }
+        event.target.appendChild(document.getElementById(data).cloneNode(true));
+        var audio = new Audio("drop.wav")
+        audio.play();
+        if (event.shiftKey) {
+          img.parentNode.removeChild(img)
+        }
+      }
+
+      function trash(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        var trash = (document.getElementById("trash").src = "trash.png");
+      }
+
+      function trashLeave(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        var trash = (document.getElementById("trash").src = "trashlit.png");
+      }
+
+      function trashDelete(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        var trash = (document.getElementById("trash").src = "trashlit.png");
+        var data = event.dataTransfer.getData("image/png");
+        var el = document.getElementById(data);
+        if (img.parentNode.id=="dest") {
+          document.getElementById("dest").removeChild(img);
+        } else {
+            var audio = new Audio("reject.wav")
+            audio.play();
+            return
+        }
+        var audio = new Audio("trash.wav")
+        audio.play();
+      }
+    </script>
+  </body>
+</html>
